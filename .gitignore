@@ -1,0 +1,4 @@
+.pytest_cache/
+wx_mp_rss_core.egg-info/
+__pycache__/
+*.pyc
