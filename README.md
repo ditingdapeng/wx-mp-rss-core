@@ -1,5 +1,4 @@
 # wx-mp-rss-core
-WeChat MP article fetcher &amp; JSON Feed generator - Python core library
 
 > 微信公众号 JSON Feed 核心库 - 轻量级的文章抓取和 JSON Feed 生成工具
 
@@ -693,7 +692,6 @@ A: 删除 `wx_token.json` 文件，重新运行登录程序。
 ### Q: 支持并行抓取吗？
 
 A: 不支持。由于 Playwright 浏览器实例的限制，只能串行处理。
-
 ## 依赖项
 
 ```
@@ -707,18 +705,3 @@ qrcode>=7.0.0          # 生成二维码
 ## 致谢
 
 本项目基于 [we-mp-rss](https://github.com/rachelos/we-mp-rss) 进行开发，感谢原作者的贡献。
-
-## 许可证
-
-MIT License
-
-## 作者
-
-Your Name
-
-## 链接
-
-- GitHub: https://github.com/yourusername/wx-mp-rss-core
-- 原项目: https://github.com/rachelos/we-mp-rss
-- 文档: https://github.com/yourusername/wx-mp-rss-core/wiki
-- 问题反馈: https://github.com/yourusername/wx-mp-rss-core/issues
