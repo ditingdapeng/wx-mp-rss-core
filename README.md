@@ -293,6 +293,155 @@ with WeChatMP() as mp:
         print(f"✅ 聚合 JSON Feed 已生成，包含 {len(all_articles)} 篇文章")
 ```
 
+## 公众号管理器
+
+`wx_mp_manager.py` 提供了更高级的公众号列表管理功能，适合需要维护固定公众号列表并定期抓取的场景。
+
+### 特点
+
+- **列表管理**：增删改查公众号列表
+- **持久化存储**：自动保存到 `feeds.json`
+- **批量抓取**：一次性抓取所有公众号文章
+- **默认列表**：内置默认公众号列表
+- **易于集成**：可被 Telegram Bot、定时任务等调用
+
+### 默认公众号列表
+
+首次运行时会自动创建包含以下公众号的列表：
+- 突围先生
+- 雪球花甲老头
+- 成元子
+- Datawhale
+- AGI智码
+
+### 基础用法
+
+```python
+from wx_mp_manager import WXMPManager
+
+# 初始化管理器
+manager = WXMPManager(
+    feeds_file="feeds.json",    # 公众号列表文件
+    output_dir="output"          # JSON Feed 输出目录
+)
+
+# 查看当前列表
+feeds = manager.list_feeds()
+for feed in feeds:
+    print(f"- {feed['name']}")
+
+# 添加公众号
+result = manager.add_feed("阮一峰的网络日志")
+print(result['message'])
+
+# 删除公众号
+result = manager.remove_feed("阮一峰的网络日志")
+print(result['message'])
+
+# 批量抓取所有公众号
+results = manager.fetch_all_feeds(count=10)
+print(f"成功: {len(results['succeeded'])}")
+print(f"失败: {len(results['failed'])}")
+```
+
+### 完整示例
+
+```python
+from wx_mp_manager import WXMPManager
+
+# 初始化
+manager = WXMPManager()
+
+# 添加新公众号
+manager.add_feed("新公众号名称")
+
+# 批量抓取（会自动登录）
+results = manager.fetch_all_feeds(count=5)
+
+# 查看结果
+if results['succeeded']:
+    print("\n成功抓取:")
+    for item in results['succeeded']:
+        print(f"  ✅ {item['name']}: {item['articles_count']} 篇文章")
+        print(f"     输出: {item['output_file']}")
+
+if results['failed']:
+    print("\n抓取失败:")
+    for item in results['failed']:
+        print(f"  ❌ {item['name']}: {item['error']}")
+```
+
+### 配置文件格式
+
+`feeds.json` 文件格式：
+
+```json
+[
+  {
+    "name": "突围先生",
+    "fakeid": "MjM5NTI2...",
+    "nickname": "突围先生"
+  },
+  {
+    "name": "Datawhale"
+  }
+]
+```
+
+**说明：**
+- `name`: 公众号名称（必需）
+- `fakeid`: 公众号 ID（可选，首次抓取时自动获取）
+- `nickname`: 公众号昵称（可选，自动获取）
+
+### 与 Telegram Bot 集成
+
+```python
+# Telegram Skill 示例
+from wx_mp_manager import WXMPManager
+
+def handle_telegram_command(command, args):
+    manager = WXMPManager()
+
+    if command == "add":
+        # 添加公众号
+        result = manager.add_feed(args)
+        return result['message']
+
+    elif command == "list":
+        # 查看列表
+        feeds = manager.list_feeds()
+        return "\n".join([f"- {f['name']}" for f in feeds])
+
+    elif command == "fetch":
+        # 批量抓取
+        results = manager.fetch_all_feeds(count=5)
+        return f"成功: {len(results['succeeded'])}, 失败: {len(results['failed'])}"
+```
+
+### 定时任务
+
+使用 cron 或 systemd timer 定期执行：
+
+```bash
+# crontab 示例：每天早上 8 点抓取
+0 8 * * * cd /path/to/wx-mp-rss-core && python3 wx_mp_manager.py
+```
+
+或者创建 Python 脚本：
+
+```python
+#!/usr/bin/env python3
+from wx_mp_manager import WXMPManager
+
+if __name__ == "__main__":
+    manager = WXMPManager()
+    results = manager.fetch_all_feeds(count=10)
+
+    # 发送通知（可选）
+    if results['succeeded']:
+        print(f"✅ 成功抓取 {len(results['succeeded'])} 个公众号")
+```
+
 ## 高级用法
 
 ### 获取文章正文
