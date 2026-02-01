@@ -1,4 +1,32 @@
+# Python
 .pytest_cache/
 wx_mp_rss_core.egg-info/
 __pycache__/
 *.pyc
+*.pyo
+*.pyd
+.Python
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+
+# 配置文件
+wx_token.json
+feeds.json
+
+# 输出目录
+output/
+static/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# 操作系统
+.DS_Store
+Thumbs.db
